@@ -1,16 +1,23 @@
-#summary An explanation of the hardware and circuitry used in the RFIDUINO.
+#summary An explanation of the hardware and circuitry used in the RFIDuino.
 
 = Introduction =
 
-The RFIDUINO has three main components; the receiver circuit where the demodulation and recovery of our signal takes place, the arduino itself where the data processing occurs, and the transmitting circuit which modulates the data back onto the 125kHz carrier wave to put out through the antenna. 
+The RFIDuino has three main components; the receiver circuit where the demodulation and recovery of our signal takes place, the Arduino itself where the data processing occurs, and the transmitting circuit which modulates the data back onto the 125kHz carrier wave to put out through the antenna. 
+
+http://i.imgur.com/EkIqgQd.jpg
+
+http://i.imgur.com/EkIqgQd.jpg
+
+http://i.imgur.com/eYxP8Hw.jpg
 
 = Design = 
 
 == RX CIRCUIT ==
 
-[schematic 1]
+http://i.imgur.com/tM0pec8.jpg
 
 Components: 
+  * 1x 1.62 mH inductor (ANTENNA)
   * 2x 1nF capacitors
   * 2x 0.1uF capacitors
   * 1x 33kOhm resistor
@@ -37,3 +44,25 @@ Because the Arduino is only able to supply 5v of power we must remove the large 
 === Comparator ===
 
 I fed the signal into the non-inverting input of my single voltage source comparator (LM339) and (using a trick I saw from Abdullah on http://www.freshengineer.com) took the average of the signal by low-pass filtering it to put into the inverting input. By doing this we avoid having to create a static threshold to compare against, meaning we can read cards from farther away now. 
+
+
+
+Now the data goes to the Arduino for processing! (see software page)
+
+
+== TX CIRCUIT ==
+
+http://i.imgur.com/ECbQfCB.jpg
+
+Components: 
+  * 1x 1.62 mH inductor (ANTENNA)
+  * 1x 1nF capacitor
+  * 1x 10kOhm resistor
+  * 1x P2N2222A NPN transistor
+
+
+=== MODULATING DATA === 
+
+The data is sent back out at a rate of 2000 kHz, but we need it to be modulated on a carrier of 125 kHz. In order to do this we turn our transistor on when we want to send a logical "1", which charges C1, allowing it to have extra energy to resonate with the antenna at a rate of 125kHz. When a "0" is sent the inductor and capacitor only have the inducted energy of whatever carrier wave from a nearby reader is present.
+
+
