@@ -1,0 +1,36 @@
+#summary An explanation of the hardware and circuitry used in the RFIDUINO.
+
+= Introduction =
+
+The RFIDUINO has three main components; the receiver circuit where the demodulation and recovery of our signal takes place, the arduino itself where the data processing occurs, and the transmitting circuit which modulates the data back onto the 125kHz carrier wave to put out through the antenna. 
+
+= Design = 
+
+== RX CIRCUIT ==
+
+[schematic 1]
+
+components: 
+
+* 2x 1nF capacitors
+* 2x 0.1uF capacitors
+* 1x 33kOhm resistor
+* 2x 100kOhm resistor
+* 2x N4148 diode
+* 1x LM339 comparator
+
+= Oscillating Capacitor = 
+
+Capacitor C1 is very important. We choose this value to match our antenna's inductance value so that they resonate at our carrier frequency (Fc = 1/(2*pi*sqrt(L*C)). By doing this, our signal will be stronger when it reaches the envelope detector.
+
+
+= Envelope Detector =
+
+Components D1, C2, and R1 form an envelope detector, which works on the following principle: The diode acts as a half-wave rectifier which charges C2 to the peak voltage of the signal, and resistor R1 allows the capacitor to "bleed" and drop in voltage during the half of the wave that is blocked. 
+
+Remember our RC time constant based on R1*C1 must be between our carrier frequency and highest modulated frequency (in this case with the parallax cards is 2 kHz < 1/(RC) < 125 kHz). Here I chose RC = 1e-4 in order to lessen the ripple effect the envelope detector has on the signal.
+
+
+
+
+
