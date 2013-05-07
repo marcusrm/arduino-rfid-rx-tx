@@ -64,3 +64,16 @@ Components:
 === MODULATING DATA === 
 
 The data is sent back out at a rate of 2000 kHz, but we need it to be modulated on a carrier of 125 kHz. In order to do this we turn our transistor on when we want to send a logical "1", which charges C1, allowing it to have extra energy to resonate with the antenna at a rate of 125kHz. When a "0" is sent the inductor and capacitor only have the inducted energy of whatever carrier wave from a nearby reader is present.
+
+
+== MISCELLANY ==
+
+A two output switch is used to redirect what the ends of the antenna are attached to since it is used for both transmitting and receiving. This could be replaced with logic gates controlled by a state button. 
+
+A piezo speaker is connected to pin 3 of the Arduino which plays tones for successful and unsuccessful ID reads.
+
+A 9v battery connected to a rocker switch is used to power the Arduino.
+
+The antenna is just a spool of magnet wire from RadioShack. It's not quite 1.62 mH but it just happens to be close enough to work without tuning.
+
+
