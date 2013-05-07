@@ -23,7 +23,7 @@ Components:
   * 1x 33kOhm resistor
   * 2x 100kOhm resistor
   * 2x N4148 diode
-  * 1x LM339 comparator
+  * 1x LM324 comparator
 
 === Oscillating Capacitor === 
 
@@ -43,7 +43,7 @@ Because the Arduino is only able to supply 5v of power we must remove the large 
 
 === Comparator ===
 
-I fed the signal into the non-inverting input of my single voltage source comparator (LM339) and (using a trick I saw from Abdullah on http://www.freshengineer.com) took the average of the signal by low-pass filtering it to put into the inverting input. By doing this we avoid having to create a static threshold to compare against, meaning we can read cards from farther away now. 
+I fed the signal into the non-inverting input of my single voltage source comparator (LM324) and (using a trick I saw from Abdullah on http://www.freshengineer.com) took the average of the signal by low-pass filtering it to put into the inverting input. By doing this we avoid having to create a static threshold to compare against, meaning we can read cards from farther away now. 
 
 
 
