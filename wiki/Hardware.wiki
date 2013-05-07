@@ -10,27 +10,30 @@ The RFIDUINO has three main components; the receiver circuit where the demodulat
 
 [schematic 1]
 
-components: 
+Components: 
+  * 2x 1nF capacitors
+  * 2x 0.1uF capacitors
+  * 1x 33kOhm resistor
+  * 2x 100kOhm resistor
+  * 2x N4148 diode
+  * 1x LM339 comparator
 
-* 2x 1nF capacitors
-* 2x 0.1uF capacitors
-* 1x 33kOhm resistor
-* 2x 100kOhm resistor
-* 2x N4148 diode
-* 1x LM339 comparator
-
-= Oscillating Capacitor = 
+=== Oscillating Capacitor === 
 
 Capacitor C1 is very important. We choose this value to match our antenna's inductance value so that they resonate at our carrier frequency (Fc = 1/(2*pi*sqrt(L*C)). By doing this, our signal will be stronger when it reaches the envelope detector.
 
 
-= Envelope Detector =
+=== Envelope Detector ===
 
 Components D1, C2, and R1 form an envelope detector, which works on the following principle: The diode acts as a half-wave rectifier which charges C2 to the peak voltage of the signal, and resistor R1 allows the capacitor to "bleed" and drop in voltage during the half of the wave that is blocked. 
 
-Remember our RC time constant based on R1*C1 must be between our carrier frequency and highest modulated frequency (in this case with the parallax cards is 2 kHz < 1/(RC) < 125 kHz). Here I chose RC = 1e-4 in order to lessen the ripple effect the envelope detector has on the signal.
+Remember our RC time constant based on R1*C1 must be between our carrier frequency and highest modulated frequency (in this case with the parallax cards is 2 kHz < 1/(RC) < 125 kHz). Here I chose RC = 1e-4 in order to lessen the ripple effect the envelope detector has on the signal. (citation: http://www.st-andrews.ac.uk/~www_pa/Scots_Guide/RadCom/part9/page2.html)
 
 
+=== DC offset ===
 
+Because the Arduino is only able to supply 5v of power we must remove the large DC offset from our signal after it comes off of the antenna. To do this we simply put a DC blocking capacitor (C3) next to a half wave rectifier (D2). However, in doing this we also lose half of the amplitude of whatever signal we had, but for this design we'll still be able to read cards at about 3-4 inches. 
 
+=== Comparator ===
 
+I fed the signal into the non-inverting input of my single voltage source comparator (LM339) and (using a trick I saw from Abdullah on http://www.freshengineer.com) took the average of the signal by low-pass filtering it to put into the inverting input. By doing this we avoid having to create a static threshold to compare against, meaning we can read cards from farther away now. 
