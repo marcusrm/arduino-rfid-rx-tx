@@ -11,6 +11,8 @@ All RFID signals are sent with Manchester encoding which is self-clocking, meani
 
 http://upload.wikimedia.org/wikipedia/commons/9/90/Manchester_encoding_both_conventions.svg
 
+(citation: http://en.wikipedia.org/wiki/Manchester_code)
+
 In order to account for this, we attach an interrupt to pin 2 that is activated every time the signal rises or falls. When we read the state of that register we know that if the pin is high, it has risen, meaning "1". Similarly, if the register is LOW, the signal has fallen, giving us a "0". 
 
 However, we must note that we have to wait for another period of our signal to pass (~500 ms) before looking for another change in the state of the register. (delay time variables are a little less to allow Arduino time to complete instructions)
@@ -31,4 +33,4 @@ http://i.imgur.com/OYMtDEj.jpg
 
 == Transmitting ==
 
-The transmitting method takes care of re-encoding the sequence with Manchester Encoding by bit banging rising and falling signals at 2 kHz.  
+The transmitting method takes care of re-encoding the sequence with Manchester Encoding by bit banging our saved sequence with rising and falling edges at kHz.
