@@ -5,7 +5,7 @@
 This is a brief description of the software that processes the signal coming from the antenna. 
 
 
-= Manchester Encoding = 
+== Manchester Encoding == 
 
 All RFID signals are sent with Manchester encoding which is self-clocking, meaning you to recover the clock from the signal. As per IEEE standards, you can think of the original data being XOR-ed with the clock so that on each falling edge of our clock we will either have a rising or falling edge of our signal. A rising edge of the signal corresponds to a "1", and a falling edge "0".
 
