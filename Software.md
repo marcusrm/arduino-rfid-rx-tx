@@ -1,0 +1,34 @@
+# Introduction #
+
+This is a brief description of the software that processes the signal coming from the antenna.
+
+
+## Manchester Encoding ##
+
+All RFID signals are sent with Manchester encoding which is self-clocking, meaning you to recover the clock from the signal. As per IEEE standards, you can think of the original data being XOR-ed with the clock so that on each falling edge of our clock we will either have a rising or falling edge of our signal. A rising edge of the signal corresponds to a "1", and a falling edge "0".
+
+![http://upload.wikimedia.org/wikipedia/commons/9/90/Manchester_encoding_both_conventions.svg](http://upload.wikimedia.org/wikipedia/commons/9/90/Manchester_encoding_both_conventions.svg)
+
+(citation: http://en.wikipedia.org/wiki/Manchester_code)
+
+In order to account for this, we attach an interrupt to pin 2 that is activated every time the signal rises or falls. When we read the state of that register we know that if the pin is high, it has risen, meaning "1". Similarly, if the register is LOW, the signal has fallen, giving us a "0".
+
+However, we must note that we have to wait for another period of our signal to pass (~500 ms) before looking for another change in the state of the register. (delay time variables are a little less to allow Arduino time to complete instructions)
+
+
+## EM4100 Protocol ##
+
+Data is sent using EM4100 protocol, which is a way of arranging bits with an easy to find header, and parity bits for each row and column of data. By using this protocol it's easier to make sure all data was successfully read and an erroneous bit didn't make its way into the final data. If the parity bits don't come out properly we disregard that read and start looking for another code.
+
+The 64 bit packets begin with a header of 9 "1"'s with 10 nibbles of data, each followed by an odd parity bit. Finally there is a row of column parity bits followed by another odd parity bit for that last row.
+Therefore there are only 40 bits of actual data, and this is our ID.
+
+Note: to save time and not have to re-encode my data later with EM4100 protocol, I save my original array of 64 bits that I read in for playing back later. However we do decode the data so we can print the code to the screen.
+
+![http://i.imgur.com/OYMtDEj.jpg](http://i.imgur.com/OYMtDEj.jpg)
+
+(citation: http://www.priority1design.com.au/em4100_protocol.html)
+
+## Transmitting ##
+
+The transmitting method takes care of re-encoding the sequence with Manchester Encoding by bit banging our saved sequence with rising and falling edges at kHz.

@@ -1,0 +1,76 @@
+# Introduction #
+
+The RFIDuino has three main components; the receiver circuit where the demodulation and recovery of our signal takes place, the Arduino itself where the data processing occurs, and the transmitting circuit which modulates the data back onto the 125kHz carrier wave to put out through the antenna.
+
+![http://i.imgur.com/EkIqgQd.jpg](http://i.imgur.com/EkIqgQd.jpg)
+
+![http://i.imgur.com/TbTWq24.jpg](http://i.imgur.com/TbTWq24.jpg)
+
+![http://i.imgur.com/eYxP8Hw.jpg](http://i.imgur.com/eYxP8Hw.jpg)
+
+# Design #
+
+## RX CIRCUIT ##
+
+![http://i.imgur.com/tM0pec8.jpg](http://i.imgur.com/tM0pec8.jpg)
+
+Components:
+  * 1x 1.62 mH inductor (ANTENNA)
+  * 2x 1nF capacitors
+  * 2x 0.1uF capacitors
+  * 1x 33kOhm resistor
+  * 2x 100kOhm resistor
+  * 2x N4148 diode
+  * 1x LM324 comparator
+
+### Oscillating Capacitor ###
+
+Capacitor C1 is very important. We choose this value to match our antenna's inductance value so that they resonate at our carrier frequency (Fc = 1/(2\*pi\*sqrt(L\*C)). By doing this, our signal will be stronger when it reaches the envelope detector.
+
+
+### Envelope Detector ###
+
+Components D1, C2, and [R1](https://code.google.com/p/arduino-rfid-rx-tx/source/detail?r=1) form an envelope detector, which works on the following principle: The diode acts as a half-wave rectifier which charges C2 to the peak voltage of the signal, and resistor [R1](https://code.google.com/p/arduino-rfid-rx-tx/source/detail?r=1) allows the capacitor to "bleed" and drop in voltage during the half of the wave that is blocked.
+
+Remember our RC time constant based on [R1](https://code.google.com/p/arduino-rfid-rx-tx/source/detail?r=1)\*C1 must be between our carrier frequency and highest modulated frequency (in this case with the parallax cards is 2 kHz < 1/(RC) < 125 kHz). Here I chose RC = 1e-4 in order to lessen the ripple effect the envelope detector has on the signal. (citation: http://www.st-andrews.ac.uk/~www_pa/Scots_Guide/RadCom/part9/page2.html)
+
+
+### DC offset ###
+
+Because the Arduino is only able to supply 5v of power we must remove the large DC offset from our signal after it comes off of the antenna. To do this we simply put a DC blocking capacitor (C3) next to a half wave rectifier (D2). However, in doing this we also lose half of the amplitude of whatever signal we had, but for this design we'll still be able to read cards at about 3-4 inches.
+
+### Comparator ###
+
+I fed the signal into the non-inverting input of my single voltage source comparator (LM324) and (using a trick I saw from Abdullah on http://www.freshengineer.com) took the average of the signal by low-pass filtering it to put into the inverting input. By doing this we avoid having to create a static threshold to compare against, meaning we can read cards from farther away now.
+
+
+
+Now the data goes to the Arduino for processing! (see software page)
+
+
+## TX CIRCUIT ##
+
+![http://i.imgur.com/ECbQfCB.jpg](http://i.imgur.com/ECbQfCB.jpg)
+
+Components:
+  * 1x 1.62 mH inductor (ANTENNA)
+  * 1x 1nF capacitor
+  * 1x 10kOhm resistor
+  * 1x P2N2222A NPN transistor
+
+
+### MODULATING DATA ###
+
+The data is sent back out at a rate of 2000 kHz, but we need it to be modulated on a carrier of 125 kHz. In order to do this we turn our transistor on when we want to send a logical "1", which charges C1, allowing it to have extra energy to resonate with the antenna at a rate of 125kHz. When a "0" is sent the inductor and capacitor only have the inducted energy of whatever carrier wave from a nearby reader is present.
+
+
+## MISCELLANY ##
+
+A two output switch is used to redirect what the ends of the antenna are attached to since it is used for both transmitting and receiving. This could be replaced with logic gates controlled by a state button.
+
+A piezo speaker is connected to pin 3 of the Arduino which plays tones for successful and unsuccessful ID reads.
+
+A 9v battery connected to a rocker switch is used to power the Arduino.
+
+The antenna is just a spool of magnet wire from RadioShack. It's not quite 1.62 mH but it just happens to be close enough to work without tuning.
+

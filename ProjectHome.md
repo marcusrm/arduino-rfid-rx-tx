@@ -1,0 +1,1 @@
+In this project I describe how I built an RFID reader and transmitter that uses EM4100 protocol.
